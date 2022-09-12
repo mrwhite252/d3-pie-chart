@@ -14,6 +14,7 @@ const svg = d3.select('.canvas')
     .append('svg')
     .attr('width', dims.width + 150)
     .attr('height', dims.height + 150)
+
 const graph = svg.append('g')
     .attr('transform', `translate(${cent.x}, ${cent.y})`);
 
@@ -29,8 +30,28 @@ const arcPath = d3.arc()
     .outerRadius(dims.radius)
     .innerRadius(dims.radius / 2);
 
-// get data from firebase
 
+// update function
+
+const update = (data) => {
+
+    // join enhanced (pie) data to path elements
+
+    const paths = graph.selectAll('path')
+        .data(pie(data));
+
+    paths.enter()
+        .append('path')
+        .attr('class', 'arc')
+        .attr('d', arcPath)
+        .attr('stroke', '#fff')
+        .attr('stroke-width', 3)
+
+}
+
+
+
+// get data from firebase
 const data = [];
 
 db.collection('expenses').onSnapshot(res => {
@@ -59,4 +80,6 @@ db.collection('expenses').onSnapshot(res => {
         }
 
     });
+
+    update(data);
 })
