@@ -55,8 +55,6 @@ const update = (data) => {
     legendGroup.call(legend);
     legendGroup.selectAll('text').attr('fill', 'white');
 
-
-
     // join enhanced (pie) data to path elements
 
     const paths = graph.selectAll('path')
@@ -89,6 +87,12 @@ const update = (data) => {
         })
         .transition().duration(750)
         .attrTween('d', arcTweenEnter)
+
+    // add events
+
+    graph.selectAll('path')
+        .on('mouseover', handleMouseOver)
+        .on('mouseout', handleMouseOut)
 
 }
 
@@ -166,5 +170,23 @@ function arcTweenUpdate(d) {
     return function (t) {
         return arcPath(i(t))
     }
+
+}
+
+// event handlers
+
+const handleMouseOver = (d, i, n) => {
+
+    d3.select(n[i])
+        .transition('changeSliceFill').duration(300)
+        .attr('fill', 'white')
+
+}
+
+
+const handleMouseOut = (d, i, n) => {
+    d3.select(n[i])
+        .transition('changeSliceFill').duration(300)
+        .attr('fill', colour(d.data.name))
 
 }
