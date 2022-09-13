@@ -61,10 +61,11 @@ const update = (data) => {
     paths.enter()
         .append('path')
         .attr('class', 'arc')
-        .attr('d', arcPath)
         .attr('stroke', '#fff')
         .attr('stroke-width', 3)
         .attr('fill', d => colour(d.data.name))
+        .transition().duration(750)
+        .attrTween('d', arcTweenEnter)
 
 }
 
@@ -101,4 +102,16 @@ db.collection('expenses').onSnapshot(res => {
     });
 
     update(data);
-})
+});
+
+// animation of the data changes
+
+const arcTweenEnter = (d) => {
+
+    const i = d3.interpolate(d.endAngle, d.startAngle);
+
+    return function (t) {
+        d.startAngle = i(t);
+        return arcPath(d);
+    }
+}
