@@ -49,7 +49,10 @@ const update = (data) => {
 
     // handle the exit selection
 
-    paths.exit().remove();
+    paths.exit()
+        .transition().duration(750)
+        .attrTween('d', arcTweenExit)
+        .remove();
 
 
     // handle the current DOM path updates
@@ -72,7 +75,7 @@ const update = (data) => {
 
 
 // get data from firebase
-const data = [];
+let data = [];
 
 db.collection('expenses').onSnapshot(res => {
 
@@ -93,7 +96,7 @@ db.collection('expenses').onSnapshot(res => {
                 data[index] = doc;
                 break;
             case 'removed':
-                data = data.filter(item => item.id != doc.id);
+                data = data.filter(item => item.id !== doc.id);
                 break;
             default:
                 break;
@@ -108,7 +111,18 @@ db.collection('expenses').onSnapshot(res => {
 
 const arcTweenEnter = (d) => {
 
-    const i = d3.interpolate(d.endAngle, d.startAngle);
+    let i = d3.interpolate(d.endAngle, d.startAngle);
+
+    return function (t) {
+        d.startAngle = i(t);
+        return arcPath(d);
+    }
+}
+
+
+const arcTweenExit = (d) => {
+
+    let i = d3.interpolate(d.startAngle, d.endAngle);
 
     return function (t) {
         d.startAngle = i(t);
