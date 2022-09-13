@@ -33,12 +33,27 @@ const arcPath = d3.arc()
 
 const colour = d3.scaleOrdinal(d3['schemeSet3']);
 
+// legend setup
+
+const legendGroup = svg.append('g')
+    .attr('transform', `translate(${dims.width + 40}, 10)`);
+
+const legend = d3.legendColor()
+    .shape('circle')
+    .shapePadding(10)
+    .scale(colour);
+
 
 // update function
 
 const update = (data) => {
 
     colour.domain(data.map(d => d.name));
+
+    // update and call legend
+
+    legendGroup.call(legend);
+    legendGroup.selectAll('text').attr('fill', 'white');
 
 
 
@@ -139,8 +154,6 @@ const arcTweenExit = (d) => {
 
 
 function arcTweenUpdate(d) {
-
-    console.log(this._current, d);
 
     // interpolate between the two objects
 
